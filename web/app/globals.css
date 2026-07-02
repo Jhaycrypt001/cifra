@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --ink: #0b0a09;
+  --paper: #f5efe2;
+  --rule: #2a2520;
+  --emerald: #10b981;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-ink text-paper;
+  font-feature-settings: "ss01", "cv11";
+  min-height: 100vh;
+}
+
+@layer components {
+  /* Editorial surfaces */
+  .card {
+    @apply border border-rule bg-ink-2/70 p-5 backdrop-blur;
+  }
+  .rule-t {
+    @apply border-t border-rule;
+  }
+
+  /* Buttons — sharp, uppercase, editorial */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] transition disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply btn border border-emerald bg-emerald text-ink hover:bg-emerald-deep hover:border-emerald-deep;
+  }
+  .btn-ghost {
+    @apply btn border border-rule bg-ink-3 text-paper hover:border-emerald/50;
+  }
+
+  .input {
+    @apply w-full border border-rule bg-ink-3 px-3.5 py-2.5 text-sm text-paper outline-none placeholder:text-paper-faint focus:border-emerald/60;
+  }
+  .label {
+    @apply mb-1.5 block text-[11px] font-medium uppercase tracking-[0.18em] text-paper-faint;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 border border-rule px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.14em];
+  }
+
+  /* Tabular mono numerals */
+  .num {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-feature-settings: "tnum", "zero";
+    font-variant-numeric: tabular-nums slashed-zero;
+  }
+}
+
+/* Faint tessellation grid — hero surfaces only */
+.tessellation {
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 84px 84px;
+  background-position: -1px -1px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 25%, black 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 25%, black 0%, transparent 75%);
+}
+
+/* Film grain overlay */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Shimmer sweep for loading / emphasis */
+.sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(245, 239, 226, 0.08), transparent);
+  animation: sweep 2.4s ease-in-out infinite;
+}
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+*:focus-visible {
+  outline: 1px solid var(--emerald);
+  outline-offset: 3px;
+}
