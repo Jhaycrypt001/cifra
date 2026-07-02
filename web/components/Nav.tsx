@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@/lib/wallet";
-import { shortAddr } from "@/lib/format";
+import { LoginButton } from "@/components/login-button";
 
 const links = [
   { href: "/dashboard", label: "Invoices" },
@@ -13,7 +13,7 @@ const links = [
 
 export function Nav() {
   const path = usePathname();
-  const { address, connect, wrongNetwork, switchToSepolia } = useWallet();
+  const { address, wrongNetwork, switchToSepolia } = useWallet();
 
   return (
     <header className="sticky top-0 z-20 border-b border-rule bg-ink/80 backdrop-blur">
@@ -42,16 +42,7 @@ export function Nav() {
               Switch to Sepolia
             </button>
           )}
-          {address ? (
-            <span className="chip border-rule text-paper">
-              <span className="h-2 w-2 rounded-full bg-emerald" />
-              {shortAddr(address)}
-            </span>
-          ) : (
-            <button onClick={connect} className="btn-primary">
-              Connect
-            </button>
-          )}
+          <LoginButton />
         </div>
       </div>
     </header>

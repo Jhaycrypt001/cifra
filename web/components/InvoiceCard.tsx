@@ -26,7 +26,7 @@ export function InvoiceCard({
   const canReveal =
     mine === inv.issuer.toLowerCase() || mine === inv.payer.toLowerCase();
 
-  async function run(label: string, fn: (signer: ethers.JsonRpcSigner) => Promise<void>) {
+  async function run(label: string, fn: (signer: ethers.Signer) => Promise<void>) {
     setBusy(label);
     setErr(null);
     try {

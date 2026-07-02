@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LoginButton } from "@/components/login-button";
 
 export function LandingHeader() {
   return (
@@ -15,9 +16,12 @@ export function LandingHeader() {
           <a href="#why" className="hover:text-paper">Why FHE</a>
           <a href="#composable" className="hover:text-paper">Composability</a>
         </nav>
-        <Link href="/dashboard" className="btn-primary">
-          Launch app
-        </Link>
+        <div className="flex items-center gap-2">
+          <LoginButton />
+          <Link href="/dashboard" className="btn-primary">
+            Launch app
+          </Link>
+        </div>
       </div>
     </header>
   );
