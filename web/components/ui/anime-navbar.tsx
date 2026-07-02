@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,6 @@ interface NavBarProps {
 }
 
 export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBarProps) {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(defaultActive);
@@ -76,19 +74,17 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
       const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number) => void } }).__lenis;
       if (lenis) lenis.scrollTo(0);
       else window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      e.preventDefault();
-      router.push(item.url);
     }
+    // For real routes (e.g. "/dashboard") let the <Link> navigate natively.
   }
 
   if (!mounted) return null;
 
   return (
-    <div className={cn("fixed left-0 right-0 top-3 z-[9999] sm:top-5", className)}>
+    <div className={cn("pointer-events-none fixed left-0 right-0 top-3 z-[9999] sm:top-5", className)}>
       <div className="flex justify-center px-3 pt-4 sm:pt-6">
         <motion.div
-          className="relative flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1.5 shadow-lg backdrop-blur-lg sm:gap-2 sm:p-2"
+          className="pointer-events-auto relative flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1.5 shadow-lg backdrop-blur-lg sm:gap-2 sm:p-2"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: hidden ? -120 : 0, opacity: hidden ? 0 : 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 26 }}
