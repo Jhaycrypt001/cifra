@@ -66,13 +66,23 @@ npx hardhat vars set INFURA_API_KEY
 npm run deploy:sepolia                 # writes deployments/addresses.sepolia.json
 ```
 
+## Live on Sepolia
+
+| Contract | Address |
+|---|---|
+| cUSDT (ERC-7984) | [`0x6841DEA24De243d70240a7EEDbE3f08Ce6F45c7c`](https://sepolia.etherscan.io/address/0x6841DEA24De243d70240a7EEDbE3f08Ce6F45c7c) |
+| InvoiceRegistry | [`0x4A4D2123A5F2C56ca9eafD31116412140A8A5EAB`](https://sepolia.etherscan.io/address/0x4A4D2123A5F2C56ca9eafD31116412140A8A5EAB) |
+| FinancingPool | [`0x3f07a683113F65b993CbCbc6Ea17Ca4107D185A5`](https://sepolia.etherscan.io/address/0x3f07a683113F65b993CbCbc6Ea17Ca4107D185A5) |
+
+RPC: `https://ethereum-sepolia-rpc.publicnode.com`
+
 ## Status
 
 - [x] Contracts: registry + pool + cUSDT, compiling
 - [x] End-to-end tests passing on FHEVM mock (create → pay, create → finance → pay)
-- [ ] Sepolia deployment
-- [ ] Frontend (Next.js + Relayer SDK)
-- [ ] Live demo + 3-min pitch + X thread
+- [x] Deployed to Sepolia
+- [x] Frontend (Next.js + Relayer SDK + Web3Auth) — build green
+- [ ] Live demo on Vercel + 3-min pitch + X thread
 
 ## License
 

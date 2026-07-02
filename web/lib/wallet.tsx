@@ -32,7 +32,7 @@ const SEPOLIA_PARAMS = {
   chainId: "0xaa36a7",
   chainName: "Sepolia",
   nativeCurrency: { name: "SepoliaETH", symbol: "ETH", decimals: 18 },
-  rpcUrls: ["https://rpc.sepolia.org"],
+  rpcUrls: ["https://ethereum-sepolia-rpc.publicnode.com"],
   blockExplorerUrls: ["https://sepolia.etherscan.io"],
 };
 

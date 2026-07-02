@@ -13,7 +13,7 @@ export const WEB3AUTH_ENABLED = Boolean(
 );
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID_HEX ?? "0xaa36a7"; // Sepolia
-const rpcTarget = process.env.NEXT_PUBLIC_RPC_URL ?? "https://rpc.sepolia.org";
+const rpcTarget = process.env.NEXT_PUBLIC_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com";
 
 export const web3AuthContextConfig: Web3AuthContextConfig = {
   web3AuthOptions: {
