@@ -21,6 +21,7 @@ const config: Config = {
           deep: "#0f9d76",
           soft: "#6ee7b7",
         },
+        primary: "#10b981", // alias used by anime-navbar
         crimson: "#b8553a",
       },
       fontFamily: {
@@ -37,10 +38,15 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(2px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "pulse-slow": {
+          "0%, 100%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         sweep: "sweep 2.4s ease-in-out infinite",
         "reveal-pop": "reveal-pop 0.35s ease-out",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
       },
     },
   },

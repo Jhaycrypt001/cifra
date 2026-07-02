@@ -3,11 +3,21 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import Lenis from "lenis";
-import { ArrowRight, EyeOff, Lock, Zap } from "lucide-react";
+import { ArrowRight, EyeOff, FileText, Home, Landmark, Lock, Wallet, Zap } from "lucide-react";
 import { Particles } from "@/components/ui/particles";
 import { ZoomParallax } from "@/components/ui/zoom-parallax";
+import WarpDriveShader from "@/components/ui/warp-drive-shader";
+import { AnimeNavBar } from "@/components/ui/anime-navbar";
 import { CipherText } from "@/components/cipher-text";
 import { LandingHeader } from "@/components/landing-header";
+
+const navItems = [
+  { name: "Home", url: "/", icon: Home },
+  { name: "How it works", url: "#how", icon: FileText },
+  { name: "Why FHE", url: "#why", icon: Lock },
+  { name: "Financing", url: "#composable", icon: Landmark },
+  { name: "Launch", url: "/dashboard", icon: Wallet },
+];
 
 const parallaxImages = [
   { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1280&h=720&fit=crop&auto=format&q=80", alt: "Encrypted circuitry", caption: "euint64" },
@@ -37,11 +47,13 @@ export default function Landing() {
   return (
     <div className="relative">
       <LandingHeader />
+      <AnimeNavBar items={navItems} defaultActive="Home" />
 
       {/* HERO */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 pt-20 text-center">
+        <WarpDriveShader variant="absolute" intensity={0.5} color="#10b981" />
         <div className="tessellation pointer-events-none absolute inset-0" />
-        <Particles className="absolute inset-0" quantity={120} ease={80} color="#10b981" refresh />
+        <Particles className="absolute inset-0" quantity={70} ease={80} color="#6ee7b7" refresh />
 
         <div className="relative z-10 mx-auto max-w-4xl">
           <span className="chip mx-auto mb-8 border-emerald/40 text-emerald">
