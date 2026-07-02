@@ -1,0 +1,26 @@
+# dependencies
+**/node_modules
+
+# hardhat / solidity
+contracts/artifacts
+contracts/cache
+contracts/coverage
+contracts/coverage.json
+contracts/types
+contracts/fhevmTemp
+contracts/deployments/*.json
+
+# next.js
+web/.next
+web/out
+web/build
+
+# env / secrets
+.env
+.env*.local
+**/.env
+**/.env*.local
+
+# misc
+.DS_Store
+*.log
