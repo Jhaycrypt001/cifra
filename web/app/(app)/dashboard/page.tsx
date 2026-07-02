@@ -50,8 +50,8 @@ export default function Dashboard() {
       <div className="card">
         <h1 className="font-display text-xl">Cifra isn’t configured yet</h1>
         <p className="mt-2 text-sm text-paper-dim">
-          Deploy the contracts (<code className="text-emerald">npm run deploy:sepolia</code>) and set the{" "}
-          <code className="text-emerald">NEXT_PUBLIC_*</code> addresses in <code>web/.env.local</code>.
+          Deploy the contracts (<code className="text-gold">npm run deploy:sepolia</code>) and set the{" "}
+          <code className="text-gold">NEXT_PUBLIC_*</code> addresses in <code>web/.env.local</code>.
         </p>
       </div>
     );
@@ -124,7 +124,7 @@ export default function Dashboard() {
             <div className="card text-center text-sm text-paper-dim">
               No invoices here yet.{" "}
               {tab === "issued" && (
-                <Link href="/create" className="text-emerald underline">
+                <Link href="/create" className="text-gold underline">
                   Create one
                 </Link>
               )}

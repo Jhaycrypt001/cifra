@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,24 +20,78 @@ interface NavBarProps {
 }
 
 export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBarProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(defaultActive);
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
+  useEffect(() => setMounted(true), []);
+
+  // "Swallow" on scroll down, reveal on scroll up.
   useEffect(() => {
-    setMounted(true);
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > 120 && y > lastScrollY.current) setHidden(true);
+      else setHidden(false);
+      lastScrollY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Scroll-spy: highlight the section currently in view.
+  useEffect(() => {
+    const hashItems = items.filter((i) => i.url.startsWith("#"));
+    if (hashItems.length === 0) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            const match = hashItems.find((i) => i.url === `#${e.target.id}`);
+            if (match) setActiveTab(match.name);
+          }
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    hashItems.forEach((i) => {
+      const el = document.getElementById(i.url.slice(1));
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [items]);
+
+  function handleClick(e: React.MouseEvent, item: NavItem) {
+    setActiveTab(item.name);
+    if (item.url.startsWith("#")) {
+      e.preventDefault();
+      const el = document.querySelector(item.url);
+      const lenis = (window as unknown as { __lenis?: { scrollTo: (t: Element, o?: object) => void } }).__lenis;
+      if (el && lenis) lenis.scrollTo(el, { offset: -90 });
+      else el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (item.url === "/") {
+      e.preventDefault();
+      const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number) => void } }).__lenis;
+      if (lenis) lenis.scrollTo(0);
+      else window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      e.preventDefault();
+      router.push(item.url);
+    }
+  }
 
   if (!mounted) return null;
 
   return (
-    <div className={cn("fixed left-0 right-0 top-5 z-[9999]", className)}>
-      <div className="flex justify-center pt-6">
+    <div className={cn("fixed left-0 right-0 top-3 z-[9999] sm:top-5", className)}>
+      <div className="flex justify-center px-3 pt-4 sm:pt-6">
         <motion.div
-          className="relative flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-2 py-2 shadow-lg backdrop-blur-lg"
+          className="relative flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1.5 shadow-lg backdrop-blur-lg sm:gap-2 sm:p-2"
           initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          animate={{ y: hidden ? -120 : 0, opacity: hidden ? 0 : 1 }}
+          transition={{ type: "spring", stiffness: 260, damping: 26 }}
         >
           {items.map((item) => {
             const Icon = item.icon;
@@ -47,11 +102,11 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
               <Link
                 key={item.name}
                 href={item.url}
-                onClick={() => setActiveTab(item.name)}
+                onClick={(e) => handleClick(e, item)}
                 onMouseEnter={() => setHoveredTab(item.name)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(
-                  "relative cursor-pointer rounded-full px-5 py-2.5 text-[13px] font-semibold transition-all duration-300",
+                  "relative cursor-pointer rounded-full px-3.5 py-2 text-[12px] font-semibold transition-all duration-300 sm:px-5 sm:py-2.5 sm:text-[13px]",
                   "text-white/70 hover:text-white",
                   isActive && "text-white",
                 )}
@@ -92,13 +147,13 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                 {isActive && (
                   <motion.div
                     layoutId="anime-mascot"
-                    className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2"
+                    className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2"
                     initial={false}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
-                    <div className="relative h-12 w-12">
+                    <div className="relative h-11 w-11">
                       <motion.div
-                        className="absolute left-1/2 h-10 w-10 -translate-x-1/2 rounded-full bg-white"
+                        className="absolute left-1/2 h-9 w-9 -translate-x-1/2 rounded-full bg-white"
                         animate={
                           hoveredTab
                             ? { scale: [1, 1.1, 1], rotate: [0, -5, 5, 0], transition: { duration: 0.5, ease: "easeInOut" } }
@@ -116,12 +171,12 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                           style={{ right: "25%", top: "40%" }}
                         />
                         <motion.div
-                          className="absolute h-1.5 w-2 rounded-full bg-emerald-soft"
+                          className="absolute h-1.5 w-2 rounded-full bg-gold-soft"
                           animate={{ opacity: hoveredTab ? 0.8 : 0.6 }}
                           style={{ left: "15%", top: "55%" }}
                         />
                         <motion.div
-                          className="absolute h-1.5 w-2 rounded-full bg-emerald-soft"
+                          className="absolute h-1.5 w-2 rounded-full bg-gold-soft"
                           animate={{ opacity: hoveredTab ? 0.8 : 0.6 }}
                           style={{ right: "15%", top: "55%" }}
                         />
@@ -137,7 +192,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                                 initial={{ opacity: 0, scale: 0 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0 }}
-                                className="absolute -right-1 -top-1 h-2 w-2 text-emerald"
+                                className="absolute -right-1 -top-1 h-2 w-2 text-gold"
                               >
                                 ✦
                               </motion.div>
@@ -146,7 +201,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="absolute -top-2 left-0 h-2 w-2 text-emerald"
+                                className="absolute -top-2 left-0 h-2 w-2 text-gold"
                               >
                                 ✦
                               </motion.div>

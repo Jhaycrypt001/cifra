@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 // Cifra — "Confidential Noir + Emerald"
-// Warm near-black editorial base, bone/cream type, emerald accent for revealed/paid state.
+// Warm near-black editorial base, bone/cream type, gold accent for revealed/paid state.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
@@ -16,12 +16,12 @@ const config: Config = {
         "paper-dim": "#c9c1b1",
         "paper-faint": "#7d756a", // ghosted ciphertext
         "paper-ghost": "#4a443c",
-        emerald: {
-          DEFAULT: "#10b981", // reveal / paid
-          deep: "#0f9d76",
-          soft: "#6ee7b7",
+        gold: {
+          DEFAULT: "#E5B045", // reveal / paid
+          deep: "#C08A2E",
+          soft: "#F3D9A0",
         },
-        primary: "#10b981", // alias used by anime-navbar
+        primary: "#E5B045", // alias used by anime-navbar
         crimson: "#b8553a",
       },
       fontFamily: {

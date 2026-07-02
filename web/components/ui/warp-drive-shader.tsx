@@ -10,7 +10,7 @@ function hexToVec3(hex: string): [number, number, number] {
 }
 
 interface WarpDriveShaderProps {
-  /** Tint of the tunnel. Defaults to Cifra emerald. */
+  /** Tint of the tunnel. Defaults to Cifra gold. */
   color?: string;
   /** "fixed" = full-viewport ambient bg (z -1); "absolute" = fills its relative parent. */
   variant?: "fixed" | "absolute";
@@ -21,7 +21,7 @@ interface WarpDriveShaderProps {
 
 /** An interactive WebGL "warp tunnel" — retinted to read as streaming ciphertext, not a rainbow. */
 export default function WarpDriveShader({
-  color = "#10b981",
+  color = "#E5B045",
   variant = "fixed",
   intensity = 0.7,
   className = "",
@@ -58,7 +58,7 @@ export default function WarpDriveShader({
 
         float r = length(uv) * 0.8;
         float offset = 0.008;
-        // Two channels around the emerald tint for subtle depth.
+        // Two channels around the gold tint for subtle depth.
         float core = pow(fract(0.5 / length(uv) + t * 2.0), 15.0);
         float edge = pow(fract(0.5 / length(uv + vec2(offset, 0.0)) + t * 2.0), 15.0);
 

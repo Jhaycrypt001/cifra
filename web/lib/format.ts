@@ -30,9 +30,9 @@ export function statusClasses(s: Status): string {
     case Status.Open:
       return "border-paper-dim/40 text-paper-dim";
     case Status.Financed:
-      return "border-emerald-soft/40 text-emerald-soft";
+      return "border-gold-soft/40 text-gold-soft";
     case Status.Paid:
-      return "border-emerald/50 text-emerald";
+      return "border-gold/50 text-gold";
     default:
       return "border-rule text-paper-faint";
   }

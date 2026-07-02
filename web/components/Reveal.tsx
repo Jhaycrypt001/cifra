@@ -39,7 +39,7 @@ export function Reveal({
   }
 
   if (value !== null) {
-    return <span className={`num animate-reveal-pop font-semibold text-emerald ${className}`}>{fmtUSD(value)}</span>;
+    return <span className={`num animate-reveal-pop font-semibold text-gold ${className}`}>{fmtUSD(value)}</span>;
   }
 
   return (
@@ -50,7 +50,7 @@ export function Reveal({
       title="Decrypt locally (only you can)"
     >
       <span className="tracking-widest text-paper-faint">•••••</span>
-      <span className="text-[11px] uppercase tracking-[0.14em] text-emerald underline decoration-dotted group-hover:text-emerald-soft">
+      <span className="text-[11px] uppercase tracking-[0.14em] text-gold underline decoration-dotted group-hover:text-gold-soft">
         {busy ? "decrypting…" : err ? "retry" : "reveal"}
       </span>
     </button>

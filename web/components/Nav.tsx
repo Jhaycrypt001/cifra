@@ -20,7 +20,7 @@ export function Nav() {
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 font-display tracking-tight">
-            <span className="grid h-7 w-7 place-items-center bg-emerald text-ink">◈</span>
+            <span className="grid h-7 w-7 place-items-center bg-gold text-ink">◈</span>
             Cifra
           </Link>
           <nav className="hidden gap-1 text-[11px] uppercase tracking-[0.14em] sm:flex">
