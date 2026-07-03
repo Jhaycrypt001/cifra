@@ -7,13 +7,14 @@ import { ADDRESSES, registry } from "@/lib/contracts";
 import { encryptAmount } from "@/lib/fhevm";
 import { toUnits } from "@/lib/format";
 import { useWallet } from "@/lib/wallet";
+import { DueDatePicker } from "@/components/ui/due-date-picker";
 
 export default function CreateInvoice() {
   const router = useRouter();
   const { address, getSigner, connect, wrongNetwork, switchToSepolia } = useWallet();
   const [payer, setPayer] = useState("");
   const [amount, setAmount] = useState("");
-  const [due, setDue] = useState("");
+  const [due, setDue] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
   const [step, setStep] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export default function CreateInvoice() {
       const { handle, proof } = await encryptAmount(ADDRESSES.registry, address, toUnits(amount));
 
       setStep("Creating invoice…");
-      const dueTs = due ? Math.floor(new Date(due).getTime() / 1000) : 0;
+      const dueTs = due ? Math.floor(due.getTime() / 1000) : 0;
       const tx = await registry(signer).createInvoice(payer, handle, proof, dueTs, memo || "Invoice");
       await tx.wait();
 
@@ -86,7 +87,7 @@ export default function CreateInvoice() {
             </div>
             <div>
               <label className="label">Due date</label>
-              <input className="input" type="date" value={due} onChange={(e) => setDue(e.target.value)} />
+              <DueDatePicker value={due} onChange={setDue} />
             </div>
           </div>
           <div>
