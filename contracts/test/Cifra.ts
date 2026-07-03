@@ -3,8 +3,8 @@ import { ethers, fhevm } from "hardhat";
 import { expect } from "chai";
 import { FhevmType } from "@fhevm/hardhat-plugin";
 import {
-  MockConfidentialUSDT,
-  MockConfidentialUSDT__factory,
+  ConfidentialUSDT,
+  ConfidentialUSDT__factory,
   InvoiceRegistry,
   InvoiceRegistry__factory,
   FinancingPool,
@@ -23,8 +23,8 @@ type Signers = {
 
 async function deployFixture() {
   const cusdt = (await (
-    (await ethers.getContractFactory("MockConfidentialUSDT")) as MockConfidentialUSDT__factory
-  ).deploy()) as MockConfidentialUSDT;
+    (await ethers.getContractFactory("ConfidentialUSDT")) as ConfidentialUSDT__factory
+  ).deploy()) as ConfidentialUSDT;
   const cusdtAddr = await cusdt.getAddress();
 
   const registry = (await (
@@ -45,7 +45,7 @@ async function deployFixture() {
 
 // Helpers ---------------------------------------------------------------------
 
-async function faucet(cusdt: MockConfidentialUSDT, to: HardhatEthersSigner, amount: number) {
+async function faucet(cusdt: ConfidentialUSDT, to: HardhatEthersSigner, amount: number) {
   await (await cusdt.connect(to).faucet(amount)).wait();
 }
 
@@ -54,7 +54,7 @@ async function encAmountFor(contractAddr: string, user: HardhatEthersSigner, amo
   return { handle: enc.handles[0], proof: enc.inputProof };
 }
 
-async function decryptBalance(cusdtAddr: string, cusdt: MockConfidentialUSDT, who: HardhatEthersSigner) {
+async function decryptBalance(cusdtAddr: string, cusdt: ConfidentialUSDT, who: HardhatEthersSigner) {
   const handle = await cusdt.confidentialBalanceOf(who.address);
   if (handle === ethers.ZeroHash) return 0n;
   return fhevm.userDecryptEuint(FhevmType.euint64, handle, cusdtAddr, who);

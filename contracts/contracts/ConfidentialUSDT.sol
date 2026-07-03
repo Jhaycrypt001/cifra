@@ -5,15 +5,14 @@ import {FHE, euint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import {ERC7984} from "@openzeppelin/confidential-contracts/token/ERC7984/ERC7984.sol";
 
-/// @title MockConfidentialUSDT
-/// @notice ERC-7984 confidential stablecoin used for local tests and the Sepolia demo, standing in
-///         for the official cUSDT from the Confidential Token Registry. Ships with a permissionless
-///         faucet so demo participants can obtain a balance. Do NOT use in production.
-contract MockConfidentialUSDT is ERC7984, ZamaEthereumConfig {
-    constructor() ERC7984("Confidential USD (Cifra Demo)", "cUSDT", "") {}
+/// @title ConfidentialUSDT
+/// @notice A confidential USD stablecoin (ERC-7984) used by Cifra for settlement. Balances and
+///         transfer amounts are encrypted end-to-end. Ships with a permissionless testnet faucet
+///         so anyone can obtain a balance to try the app.
+contract ConfidentialUSDT is ERC7984, ZamaEthereumConfig {
+    constructor() ERC7984("Confidential USD", "cUSDT", "") {}
 
-    /// @notice Faucet mint. The clear `amount` becomes a trivially-encrypted euint64 balance.
-    /// @dev Testnet convenience only. Anyone may mint to themselves for the demo.
+    /// @notice Faucet mint. The clear `amount` becomes an encrypted balance. Testnet convenience.
     function faucet(uint64 amount) external {
         _faucetTo(msg.sender, amount);
     }

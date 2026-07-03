@@ -5,7 +5,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 /**
  * Deploys the Cifra stack:
- *   1. MockConfidentialUSDT (ERC-7984 cUSDT with faucet)
+ *   1. ConfidentialUSDT (ERC-7984 cUSDT with faucet)
  *   2. InvoiceRegistry(cusdt)
  *   3. FinancingPool(cusdt)
  * then wires registry <-> pool and exports addresses for the frontend.
@@ -25,7 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     cusdtAddress = existingCusdt;
     console.log(`Using existing cUSDT at ${cusdtAddress}`);
   } else {
-    const cusdt = await deploy("MockConfidentialUSDT", { from: deployer, log: true });
+    const cusdt = await deploy("ConfidentialUSDT", { from: deployer, log: true });
     cusdtAddress = cusdt.address;
   }
 
