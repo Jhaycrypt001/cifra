@@ -44,14 +44,14 @@ export function LoginButton() {
   const initials = (name?.match(/\b\w/g) ?? ["◈"]).slice(0, 2).join("").toUpperCase();
 
   return (
-    <div className="relative" ref={wrap}>
+    <div className="relative z-[10001]" ref={wrap}>
       <button onClick={() => setOpen((o) => !o)} className="chip border-rule text-paper">
         <span className="grid h-4 w-4 place-items-center bg-gold text-[9px] font-bold text-ink">{initials}</span>
         <span className="num">{shortAddr(address)}</span>
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-60 border border-rule bg-ink-2 p-3 shadow-xl">
+        <div className="absolute right-0 z-[10001] mt-2 w-60 border border-rule bg-ink-2 p-3 shadow-xl">
           <div className="flex items-center gap-2 border-b border-rule pb-3">
             <span className="grid h-8 w-8 place-items-center bg-gold text-xs font-bold text-ink">{initials}</span>
             <div className="min-w-0">
