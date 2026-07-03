@@ -108,11 +108,32 @@ export function resetDecryptSession() {
   session = null;
 }
 
-/** Publicly decrypt handles that were made publicly decryptable on-chain (e.g. a proof boolean).
- *  The SDK returns `{ clearValues, abiEncodedClearValues, decryptionProof }`; we return the
- *  `clearValues` map (handle -> value). */
+function unwrapClear(res: any): Record<string, unknown> {
+  return (res?.clearValues ?? res) as Record<string, unknown>;
+}
+
+/** Publicly decrypt handles that were made publicly decryptable on-chain (e.g. a proof boolean). */
 export async function publicDecrypt(handles: string[]): Promise<Record<string, unknown>> {
   const fhevm = await getFhevm();
-  const res = (await fhevm.publicDecrypt(handles)) as any;
-  return (res?.clearValues ?? res) as Record<string, unknown>;
+  return unwrapClear(await fhevm.publicDecrypt(handles));
+}
+
+// Wallet-less instance for public verification (a lender opens /verify with no wallet).
+let readonlyPromise: Promise<FhevmInstance> | null = null;
+async function getFhevmReadonly(): Promise<FhevmInstance> {
+  if (!readonlyPromise) {
+    readonlyPromise = (async () => {
+      const { createInstance, SepoliaConfig, initSDK } = await import("@zama-fhe/relayer-sdk/web");
+      if (typeof initSDK === "function") await initSDK();
+      const rpc = process.env.NEXT_PUBLIC_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com";
+      return createInstance({ ...SepoliaConfig, network: rpc });
+    })();
+  }
+  return readonlyPromise;
+}
+
+/** Public decryption without a connected wallet (used by the /verify page). */
+export async function publicDecryptReadonly(handles: string[]): Promise<Record<string, unknown>> {
+  const fhevm = await getFhevmReadonly();
+  return unwrapClear(await fhevm.publicDecrypt(handles));
 }

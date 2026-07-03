@@ -20,7 +20,8 @@ export function ProofOfIncome() {
   const [incomeHandle, setIncomeHandle] = useState<string>("");
   const [threshold, setThreshold] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
-  const [result, setResult] = useState<{ threshold: string; verified: boolean } | null>(null);
+  const [result, setResult] = useState<{ threshold: string; verified: boolean; handle: string } | null>(null);
+  const [copied, setCopied] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const loadIncome = useCallback(async () => {
@@ -62,7 +63,7 @@ export function ProofOfIncome() {
       const res = await publicDecrypt([handle]);
       // Look up by handle; fall back to the only value (case/format differences on the key).
       const raw = res[handle] ?? res[handle.toLowerCase()] ?? Object.values(res)[0];
-      setResult({ threshold, verified: Boolean(raw) });
+      setResult({ threshold, verified: Boolean(raw), handle });
     } catch (e: any) {
       setErr(e?.shortMessage || e?.reason || e?.message || "Failed to generate proof");
     } finally {
@@ -115,11 +116,28 @@ export function ProofOfIncome() {
       {result && (
         <div className={`mt-4 border px-4 py-3 ${result.verified ? "border-gold/40 bg-gold/10" : "border-rule bg-ink-3"}`}>
           {result.verified ? (
-            <p className="text-sm text-paper">
-              <span className="font-semibold text-gold">✓ Verified.</span> Income exceeds{" "}
-              <span className="num">${Number(result.threshold).toLocaleString()}</span> cUSDT. The exact amount
-              was never revealed, and anyone can verify this proof on-chain.
-            </p>
+            <div>
+              <p className="text-sm text-paper">
+                <span className="font-semibold text-gold">✓ Verified.</span> Income exceeds{" "}
+                <span className="num">${Number(result.threshold).toLocaleString()}</span> cUSDT. The exact amount
+                was never revealed, and anyone can verify this proof on-chain.
+              </p>
+              <button
+                className="btn-ghost mt-3"
+                onClick={() => {
+                  const link = `${window.location.origin}/verify?a=${address}&t=${result.threshold}&h=${result.handle}`;
+                  navigator.clipboard.writeText(link).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1600);
+                  });
+                }}
+              >
+                {copied ? "Link copied" : "Copy verification link"}
+              </button>
+              <p className="mt-2 text-[11px] text-paper-faint">
+                Send this link to a lender or landlord. They can verify it with no wallet, no login.
+              </p>
+            </div>
           ) : (
             <p className="text-sm text-paper-dim">
               Could not verify income above ${Number(result.threshold).toLocaleString()}. (Your income may be
