@@ -113,6 +113,11 @@ describe("Cifra", function () {
 
     const inv = await registry.getInvoice(0);
     expect(inv.status).to.eq(2); // Paid
+
+    // Proof-of-income accrual (encrypted) + payer reputation (public).
+    expect(await registry.invoicesPaidBy(payer.address)).to.eq(1n);
+    const incHandle = await registry.incomeHandleOf(issuer.address);
+    expect(await fhevm.userDecryptEuint(FhevmType.euint64, incHandle, registryAddr, issuer)).to.eq(300n);
   });
 
   it("create -> finance -> pay: pool advances (amount - 2% fee), gets repaid on settlement", async function () {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {FHE, euint64, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import {IERC7984} from "@openzeppelin/confidential-contracts/interfaces/IERC7984.sol";
 import {IFinancingPool} from "./interfaces/IFinancingPool.sol";
@@ -37,12 +37,19 @@ contract InvoiceRegistry is ZamaEthereumConfig {
     mapping(address => uint256[]) private _issuedBy;
     mapping(address => uint256[]) private _billedTo;
 
+    // Proof of Income (#1): encrypted lifetime settled income per issuer.
+    mapping(address => euint64) private _income;
+    // Reputation (#3): public count of invoices a payer has settled (on-chain credit signal).
+    mapping(address => uint32) public invoicesPaidBy;
+
     event InvoiceCreated(
         uint256 indexed id, address indexed issuer, address indexed payer, uint64 dueDate, string memo
     );
     event InvoicePaid(uint256 indexed id, address recipient);
     event InvoiceFinanced(uint256 indexed id, address indexed pool);
     event InvoiceCancelled(uint256 indexed id);
+    /// @dev The boolean result (income > threshold) is now publicly decryptable via the relayer.
+    event IncomeProofRequested(address indexed issuer, uint64 threshold, bytes32 resultHandle);
 
     error NotOwner();
     error NotIssuer();
@@ -117,8 +124,31 @@ contract InvoiceRegistry is ZamaEthereumConfig {
             pool.releaseReserve(id, inv.issuer, inv.amount);
         }
 
+        // Accrue the issuer's encrypted lifetime income (for Proof of Income), and bump the
+        // payer's public reputation (a settled invoice = a good on-chain credit signal).
+        euint64 inc = FHE.add(_income[inv.issuer], inv.amount);
+        FHE.allowThis(inc);
+        FHE.allow(inc, inv.issuer);
+        _income[inv.issuer] = inc;
+        invoicesPaidBy[inv.payer] += 1;
+
         inv.status = Status.Paid;
         emit InvoicePaid(id, inv.recipient);
+    }
+
+    /// @notice Prove your lifetime income is above `threshold` WITHOUT revealing the actual figure.
+    ///         Computes an encrypted boolean and makes only that boolean publicly decryptable, so a
+    ///         lender/landlord can verify "income > X" while the real number stays private.
+    function proveIncomeAbove(uint64 threshold) external {
+        ebool ok = FHE.gt(_income[msg.sender], threshold);
+        FHE.allowThis(ok);
+        FHE.makePubliclyDecryptable(ok);
+        emit IncomeProofRequested(msg.sender, threshold, ebool.unwrap(ok));
+    }
+
+    /// @notice Encrypted lifetime income handle for `account` (decryptable only by that account).
+    function incomeHandleOf(address account) external view returns (euint64) {
+        return _income[account];
     }
 
     /// @notice Issuer sells an open invoice to the financing pool for an instant advance.

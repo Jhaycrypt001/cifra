@@ -90,7 +90,7 @@ npm run deploy:sepolia
 | Contract | Address |
 |---|---|
 | cUSDT (ERC-7984) | [`0xCd5D11A2C90154ad21294eed1773a35A858c0b0c`](https://sepolia.etherscan.io/address/0xCd5D11A2C90154ad21294eed1773a35A858c0b0c#code) |
-| InvoiceRegistry | [`0x0608EaFab507d829e16051E06d1048Fa53805028`](https://sepolia.etherscan.io/address/0x0608EaFab507d829e16051E06d1048Fa53805028#code) |
+| InvoiceRegistry | [`0x58478f59e86Cd5168f99eB6eebC01cf8F430ba29`](https://sepolia.etherscan.io/address/0x58478f59e86Cd5168f99eB6eebC01cf8F430ba29#code) |
 | FinancingPool | [`0xE8423D9cbabe47F9519E21c007f55d5027A60006`](https://sepolia.etherscan.io/address/0xE8423D9cbabe47F9519E21c007f55d5027A60006#code) |
 
 RPC: `https://ethereum-sepolia-rpc.publicnode.com`
