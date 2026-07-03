@@ -25,6 +25,8 @@ export function InvoiceCard({
   const mine = address?.toLowerCase();
   const canReveal =
     mine === inv.issuer.toLowerCase() || mine === inv.payer.toLowerCase();
+  const overdue =
+    (inv.status === Status.Open || inv.status === Status.Financed) && inv.dueDate * 1000 < Date.now();
 
   async function run(label: string, fn: (signer: ethers.Signer) => Promise<void>) {
     setBusy(label);
@@ -73,7 +75,10 @@ export function InvoiceCard({
             {counterpartyLabel} {shortAddr(counterparty)} · due {dueLabel(inv.dueDate)}
           </div>
         </div>
-        <span className={`chip ${statusClasses(inv.status)}`}>{statusLabel(inv.status)}</span>
+        <div className="flex shrink-0 items-center gap-2">
+          {overdue && <span className="chip border-crimson/50 text-crimson">Overdue</span>}
+          <span className={`chip ${statusClasses(inv.status)}`}>{statusLabel(inv.status)}</span>
+        </div>
       </div>
 
       <div className="flex items-center justify-between border border-rule bg-ink-3/60 px-3.5 py-3">
@@ -104,6 +109,13 @@ export function InvoiceCard({
           </>
         )}
       </div>
+
+      {role === "issuer" && inv.status === Status.Open && (
+        <p className="text-[11px] text-paper-faint">
+          <span className="text-gold">Get paid now</span> advances 85% up front. The remaining 13% is
+          released when your client pays (2% fee to the pool).
+        </p>
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { CipherText } from "@/components/cipher-text";
 import { LandingHeader } from "@/components/landing-header";
 import { FadeIn } from "@/components/fade-in";
 import { SiteFooter } from "@/components/site-footer";
+import { StatsStrip } from "@/components/stats-strip";
 
 const navItems = [
   { name: "Home", url: "/", icon: Home },
@@ -95,6 +96,9 @@ export default function Landing() {
 
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink" />
       </section>
+
+      {/* LIVE STATS */}
+      <StatsStrip />
 
       {/* HOW IT WORKS */}
       <section id="how" className="mx-auto max-w-6xl scroll-mt-28 px-5 py-28">

@@ -30,6 +30,7 @@ export const REGISTRY_ABI = [
 ];
 
 export const POOL_ABI = [
+  "function advanceBps() view returns (uint64)",
   "function feeBps() view returns (uint64)",
   "function maxAdvance() view returns (uint64)",
   "function depositOf(address lp) view returns (bytes32)",

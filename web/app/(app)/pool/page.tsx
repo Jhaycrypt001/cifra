@@ -12,6 +12,8 @@ const OPERATOR_UNTIL = 4_000_000_000;
 export default function PoolPage() {
   const { address, provider, getSigner, connect, wrongNetwork, switchToSepolia } = useWallet();
   const [feeBps, setFeeBps] = useState<number | null>(null);
+  const [advanceBps, setAdvanceBps] = useState<number | null>(null);
+  const [maxAdvance, setMaxAdvance] = useState<bigint | null>(null);
   const [depHandle, setDepHandle] = useState("");
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<string | null>(null);
@@ -20,8 +22,11 @@ export default function PoolPage() {
   const load = useCallback(async () => {
     if (!provider || !address) return;
     try {
-      setFeeBps(Number(await pool(provider).feeBps()));
-      setDepHandle(await pool(provider).depositOf(address));
+      const p = pool(provider);
+      setFeeBps(Number(await p.feeBps()));
+      setAdvanceBps(Number(await p.advanceBps()));
+      setMaxAdvance(await p.maxAdvance());
+      setDepHandle(await p.depositOf(address));
     } catch {
       /* not configured / no deposit yet */
     }
@@ -61,9 +66,24 @@ export default function PoolPage() {
     <div className="mx-auto max-w-xl">
       <h1 className="font-display text-3xl font-light tracking-tight">Financing pool</h1>
       <p className="mt-1 text-sm text-paper-dim">
-        Provide cUSDT liquidity. The pool advances cash on invoices it can’t read and earns the
-        discount fee{feeBps !== null ? ` (currently ${(feeBps / 100).toFixed(2)}%)` : ""} when they settle.
+        Provide cUSDT liquidity and earn yield. The pool factors invoices it can never read and keeps
+        the fee on every invoice it finances. That fee is your return as a liquidity provider.
       </p>
+
+      {/* Pool terms — real-factoring parameters */}
+      <div className="mt-6 grid grid-cols-3 gap-px overflow-hidden border border-rule bg-rule">
+        <Term label="Advance rate" value={advanceBps !== null ? `${(advanceBps / 100).toFixed(0)}%` : "—"} note="paid up front" />
+        <Term
+          label="Fee (LP yield)"
+          value={feeBps !== null ? `${(feeBps / 100).toFixed(2)}%` : "—"}
+          note="per financed invoice"
+        />
+        <Term
+          label="Max / invoice"
+          value={maxAdvance !== null ? `${(Number(maxAdvance) / 1e6).toLocaleString()}` : "—"}
+          note="cUSDT cap"
+        />
+      </div>
 
       {!address ? (
         <div className="card mt-8 flex items-center justify-between">
@@ -115,6 +135,16 @@ export default function PoolPage() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function Term({ label, value, note }: { label: string; value: string; note: string }) {
+  return (
+    <div className="bg-ink-2 p-4">
+      <div className="label mb-1">{label}</div>
+      <div className="num text-xl text-gold">{value}</div>
+      <div className="mt-0.5 text-[11px] text-paper-faint">{note}</div>
     </div>
   );
 }
