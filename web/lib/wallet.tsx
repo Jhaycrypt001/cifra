@@ -12,6 +12,15 @@ import { CHAIN_ID } from "./contracts";
 import { WEB3AUTH_ENABLED } from "./web3auth";
 import { resetDecryptSession } from "./fhevm";
 
+/** Normalize to EIP-55 checksum (the Relayer SDK rejects non-checksummed addresses). */
+function toChecksum(a?: string | null): string | null {
+  try {
+    return a ? ethers.getAddress(a) : null;
+  } catch {
+    return null;
+  }
+}
+
 type UserInfo = { name?: string; email?: string } | null;
 
 type WalletState = {
@@ -68,7 +77,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const accounts: string[] = await eip1193.request({ method: "eth_accounts" });
-      setAddress(accounts?.[0] ?? null);
+      setAddress(toChecksum(accounts?.[0]));
       const cid: string = await eip1193.request({ method: "eth_chainId" });
       setChainId(parseInt(cid, 16));
     } catch {
@@ -85,7 +94,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     const e = injected();
     if (!e?.on || w3aConnected) return;
     const onAccounts = (a: string[]) => {
-      setAddress(a[0] ?? null);
+      setAddress(toChecksum(a[0]));
       resetDecryptSession();
     };
     const onChain = (c: string) => setChainId(parseInt(c, 16));

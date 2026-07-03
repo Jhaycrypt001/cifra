@@ -26,7 +26,8 @@ export async function getFhevm(): Promise<FhevmInstance> {
 /** Encrypt a single uint64 as an external input bound to (contract, user). */
 export async function encryptAmount(contractAddress: string, userAddress: string, amount: bigint) {
   const fhevm = await getFhevm();
-  const input = fhevm.createEncryptedInput(contractAddress, userAddress);
+  // The Relayer SDK requires EIP-55 checksummed addresses.
+  const input = fhevm.createEncryptedInput(ethers.getAddress(contractAddress), ethers.getAddress(userAddress));
   input.add64(amount);
   const enc = await input.encrypt();
   return {
@@ -53,7 +54,9 @@ let session: DecryptSession | null = null;
  * wallet to sign an EIP-712 authorizing decryption for the app's contracts for `durationDays`.
  */
 export async function ensureDecryptSession(signer: ethers.Signer, userAddress: string): Promise<DecryptSession> {
-  const contracts = [ADDRESSES.registry, ADDRESSES.pool, ADDRESSES.cUSDT].filter((a) => ethers.isAddress(a));
+  const contracts = [ADDRESSES.registry, ADDRESSES.pool, ADDRESSES.cUSDT]
+    .filter((a) => ethers.isAddress(a))
+    .map((a) => ethers.getAddress(a));
   const now = Math.floor(Date.now() / 1000);
 
   if (session && session.startTimestamp + session.durationDays * 86400 - 3600 > now) {
@@ -89,12 +92,12 @@ export async function decryptOne(
   const fhevm = await getFhevm();
   const s = await ensureDecryptSession(signer, userAddress);
   const results = await fhevm.userDecrypt(
-    [{ handle, contractAddress }],
+    [{ handle, contractAddress: ethers.getAddress(contractAddress) }],
     s.privateKey,
     s.publicKey,
     s.signature,
     s.contracts,
-    userAddress,
+    ethers.getAddress(userAddress),
     s.startTimestamp,
     s.durationDays,
   );
