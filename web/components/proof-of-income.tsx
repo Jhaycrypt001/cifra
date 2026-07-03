@@ -60,7 +60,9 @@ export function ProofOfIncome() {
 
       setBusy("Decrypting proof…");
       const res = await publicDecrypt([handle]);
-      setResult({ threshold, verified: Boolean(res[handle]) });
+      // Look up by handle; fall back to the only value (case/format differences on the key).
+      const raw = res[handle] ?? res[handle.toLowerCase()] ?? Object.values(res)[0];
+      setResult({ threshold, verified: Boolean(raw) });
     } catch (e: any) {
       setErr(e?.shortMessage || e?.reason || e?.message || "Failed to generate proof");
     } finally {

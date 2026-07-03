@@ -108,8 +108,11 @@ export function resetDecryptSession() {
   session = null;
 }
 
-/** Publicly decrypt handles that were made publicly decryptable on-chain (e.g. a proof boolean). */
+/** Publicly decrypt handles that were made publicly decryptable on-chain (e.g. a proof boolean).
+ *  The SDK returns `{ clearValues, abiEncodedClearValues, decryptionProof }`; we return the
+ *  `clearValues` map (handle -> value). */
 export async function publicDecrypt(handles: string[]): Promise<Record<string, unknown>> {
   const fhevm = await getFhevm();
-  return (await fhevm.publicDecrypt(handles)) as Record<string, unknown>;
+  const res = (await fhevm.publicDecrypt(handles)) as any;
+  return (res?.clearValues ?? res) as Record<string, unknown>;
 }
