@@ -7,6 +7,7 @@ import { invoicesFor } from "@/lib/data";
 import { useWallet } from "@/lib/wallet";
 import { InvoiceCard } from "@/components/InvoiceCard";
 import { Reveal } from "@/components/Reveal";
+import { ProofOfIncome } from "@/components/proof-of-income";
 
 export default function Dashboard() {
   const { address, provider, getSigner, connect, wrongNetwork, switchToSepolia } = useWallet();
@@ -101,6 +102,8 @@ export default function Dashboard() {
               {fauceting ? "Minting…" : "Get 1,000 test cUSDT"}
             </button>
           </div>
+
+          <ProofOfIncome />
 
           <div className="flex gap-1 border border-rule bg-ink-2 p-1 text-[11px] uppercase tracking-[0.14em]">
             {(["billed", "issued"] as const).map((t) => (

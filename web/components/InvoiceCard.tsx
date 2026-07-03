@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ethers } from "ethers";
 import { ADDRESSES, cusdt, Invoice, registry, Status } from "@/lib/contracts";
 import { dueLabel, shortAddr, statusClasses, statusLabel } from "@/lib/format";
@@ -70,7 +71,9 @@ export function InvoiceCard({
     <div className="card flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="font-medium">{inv.memo || `Invoice #${inv.id}`}</div>
+          <Link href={`/invoice/${inv.id}`} className="font-medium hover:text-gold">
+            {inv.memo || `Invoice #${inv.id}`}
+          </Link>
           <div className="text-xs text-muted">
             {counterpartyLabel} {shortAddr(counterparty)} · due {dueLabel(inv.dueDate)}
           </div>

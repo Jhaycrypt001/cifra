@@ -107,3 +107,9 @@ export async function decryptOne(
 export function resetDecryptSession() {
   session = null;
 }
+
+/** Publicly decrypt handles that were made publicly decryptable on-chain (e.g. a proof boolean). */
+export async function publicDecrypt(handles: string[]): Promise<Record<string, unknown>> {
+  const fhevm = await getFhevm();
+  return (await fhevm.publicDecrypt(handles)) as Record<string, unknown>;
+}
