@@ -11,6 +11,7 @@ import { AnimeNavBar } from "@/components/ui/anime-navbar";
 import { CipherText } from "@/components/cipher-text";
 import { LandingHeader } from "@/components/landing-header";
 import { FadeIn } from "@/components/fade-in";
+import { SiteFooter } from "@/components/site-footer";
 
 const navItems = [
   { name: "Home", url: "/", icon: Home },
@@ -120,12 +121,12 @@ export default function Landing() {
 
       {/* PARALLAX SHOWCASE */}
       <section className="relative">
-        <div className="relative z-10 flex h-[45vh] flex-col items-center justify-center px-5 text-center">
+        <FadeIn className="relative z-10 flex h-[45vh] flex-col items-center justify-center px-5 text-center">
           <SectionLabel>Encrypted by design</SectionLabel>
           <h2 className="mt-3 max-w-2xl font-display text-3xl font-light leading-tight sm:text-4xl">
             Scroll into the ciphertext.
           </h2>
-        </div>
+        </FadeIn>
         <ZoomParallax images={parallaxImages} />
       </section>
 
@@ -155,7 +156,7 @@ export default function Landing() {
       {/* COMPOSABILITY CTA */}
       <section id="composable" className="relative scroll-mt-28 overflow-hidden border-t border-rule">
         <div className="tessellation pointer-events-none absolute inset-0" />
-        <div className="relative z-10 mx-auto max-w-3xl px-5 py-28 text-center">
+        <FadeIn className="relative z-10 mx-auto max-w-3xl px-5 py-28 text-center">
           <h2 className="font-display text-4xl font-light leading-tight sm:text-5xl">
             Ship you an invoice.
             <br />
@@ -166,12 +167,10 @@ export default function Landing() {
               Launch Cifra <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
-      <footer className="border-t border-rule px-5 py-10 text-center text-[11px] uppercase tracking-[0.16em] text-paper-faint">
-        Cifra · Confidential invoicing on the Zama Protocol · Amounts encrypted end-to-end
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

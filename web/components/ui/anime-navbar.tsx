@@ -23,9 +23,18 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(defaultActive);
   const [hidden, setHidden] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => setMounted(true), []);
+
+  // Track viewport so the bar can dock to the bottom on mobile (avoids the top header).
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // "Swallow" on scroll down, reveal on scroll up.
   useEffect(() => {
@@ -81,12 +90,17 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
   if (!mounted) return null;
 
   return (
-    <div className={cn("pointer-events-none fixed left-0 right-0 top-3 z-[9999] sm:top-5", className)}>
-      <div className="flex justify-center px-3 pt-4 sm:pt-6">
+    <div
+      className={cn(
+        "pointer-events-none fixed inset-x-0 z-[9999] bottom-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-auto sm:top-5",
+        className,
+      )}
+    >
+      <div className="flex justify-center px-3 sm:pt-6">
         <motion.div
-          className="pointer-events-auto relative flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1.5 shadow-lg backdrop-blur-lg sm:gap-2 sm:p-2"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: hidden ? -120 : 0, opacity: hidden ? 0 : 1 }}
+          className="pointer-events-auto relative flex items-center gap-0.5 rounded-full border border-white/10 bg-black/70 p-1 shadow-lg backdrop-blur-lg sm:gap-2 sm:bg-black/60 sm:p-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: hidden ? (isMobile ? 140 : -120) : 0, opacity: hidden ? 0 : 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 26 }}
         >
           {items.map((item) => {
@@ -143,7 +157,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                 {isActive && (
                   <motion.div
                     layoutId="anime-mascot"
-                    className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2"
+                    className="pointer-events-none absolute -top-11 left-1/2 hidden -translate-x-1/2 sm:block"
                     initial={false}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
