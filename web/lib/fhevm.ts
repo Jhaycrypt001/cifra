@@ -63,7 +63,9 @@ export async function ensureDecryptSession(signer: ethers.Signer, userAddress: s
   const fhevm = await getFhevm();
   const { publicKey, privateKey } = fhevm.generateKeypair();
   const durationDays = 7;
-  const startTimestamp = now;
+  // Backdate 5 min: the relayer rejects any startTimestamp that lands in its (clock-skewed)
+  // future with a `requestValidity` 400. Verified against live Sepolia.
+  const startTimestamp = now - 300;
   const eip712 = fhevm.createEIP712(publicKey, contracts, startTimestamp, durationDays);
 
   const signature = await signer.signTypedData(
