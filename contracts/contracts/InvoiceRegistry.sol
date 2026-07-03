@@ -103,10 +103,19 @@ contract InvoiceRegistry is ZamaEthereumConfig {
         if (msg.sender != inv.payer) revert NotPayer();
         if (inv.status != Status.Open && inv.status != Status.Financed) revert BadStatus();
 
+        bool financed = inv.status == Status.Financed;
+
         // Grant the token transient access to the encrypted amount for this transaction.
         FHE.allowTransient(inv.amount, address(cusdt));
         // Registry moves funds as an operator of the payer. Transfers "up to" the payer's balance.
         cusdt.confidentialTransferFrom(inv.payer, inv.recipient, inv.amount);
+
+        // If financed, the pool just received the full face value; release the reserve
+        // (invoice minus advance, minus fee) back to the issuer.
+        if (financed) {
+            FHE.allowTransient(inv.amount, address(pool));
+            pool.releaseReserve(id, inv.issuer, inv.amount);
+        }
 
         inv.status = Status.Paid;
         emit InvoicePaid(id, inv.recipient);

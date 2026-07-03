@@ -5,8 +5,8 @@ import { ArrowUpRight } from "lucide-react";
 
 const CONTRACTS = [
   { label: "cUSDT (ERC-7984)", addr: "0xCd5D11A2C90154ad21294eed1773a35A858c0b0c" },
-  { label: "InvoiceRegistry", addr: "0x2C86415F2932072DED862Fc05483EfD9eCDeE1C5" },
-  { label: "FinancingPool", addr: "0x7Cd12479422AB9A8441F64d2cbDbec2f4e966810" },
+  { label: "InvoiceRegistry", addr: "0x0608EaFab507d829e16051E06d1048Fa53805028" },
+  { label: "FinancingPool", addr: "0xE8423D9cbabe47F9519E21c007f55d5027A60006" },
 ];
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;

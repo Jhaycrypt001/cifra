@@ -136,16 +136,18 @@ describe("Cifra", function () {
     ).wait();
     await (await registry.connect(issuer).financeInvoice(0)).wait();
 
-    // Issuer received the discounted advance immediately: 1000 * 9800 / 10000 = 980.
-    expect(await decryptBalance(cusdtAddr, cusdt, issuer)).to.eq(980n);
+    // Issuer received the 85% advance immediately: 1000 * 8500 / 10000 = 850.
+    expect(await decryptBalance(cusdtAddr, cusdt, issuer)).to.eq(850n);
 
     const financed = await registry.getInvoice(0);
     expect(financed.status).to.eq(1); // Financed
     expect(financed.recipient).to.eq(poolAddr);
 
-    // Payer settles: 1000 routes to the pool.
+    // Payer settles: 1000 routes to the pool, which releases the 13% reserve to the issuer.
     await (await registry.connect(payer).payInvoice(0)).wait();
     expect(await decryptBalance(cusdtAddr, cusdt, payer)).to.eq(0n);
+    // Issuer now holds advance + rebate = 850 + 130 = 980 (pool kept 20 = the 2% fee).
+    expect(await decryptBalance(cusdtAddr, cusdt, issuer)).to.eq(980n);
 
     const paid = await registry.getInvoice(0);
     expect(paid.status).to.eq(2); // Paid
