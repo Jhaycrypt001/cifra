@@ -86,7 +86,7 @@ export default function PoolPage() {
             {depHandle ? (
               <Reveal handle={depHandle} contractAddress={ADDRESSES.pool} className="text-xl" />
             ) : (
-              <span className="text-paper-faint">—</span>
+              <span className="text-paper-faint">N/A</span>
             )}
           </div>
 

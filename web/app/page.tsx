@@ -73,7 +73,7 @@ export default function Landing() {
 
           <p className="mx-auto mt-7 max-w-xl text-base text-paper-dim sm:text-lg">
             Cifra is confidential invoicing with instant financing. Amounts are encrypted
-            end-to-end on a public chain — and you can sell an unpaid invoice for cash to a pool
+            end-to-end on a public chain, and you can sell an unpaid invoice for cash to a pool
             that funds it without ever seeing the number.
           </p>
 
@@ -106,7 +106,7 @@ export default function Landing() {
         </FadeIn>
         <div className="mt-14 grid gap-px overflow-hidden border border-rule bg-rule sm:grid-cols-3">
           {[
-            { n: "01", t: "Issue", d: "Create an invoice with an encrypted amount. The public chain sees a ciphertext handle — nothing more." },
+            { n: "01", t: "Issue", d: "Create an invoice with an encrypted amount. The public chain only sees a ciphertext handle, nothing more." },
             { n: "02", t: "Get paid now", d: "Sell the unpaid invoice to the pool. It advances cash computed on encrypted data, gated by on-ciphertext risk rules." },
             { n: "03", t: "Settle", d: "Your client pays in cUSDT. The loan auto-settles to the pool. Every figure stays encrypted end-to-end." },
           ].map((s, i) => (
@@ -141,8 +141,8 @@ export default function Landing() {
         <div className="mt-12 grid gap-6 sm:grid-cols-3">
           {[
             { icon: EyeOff, t: "Nothing leaks", d: "Balances and invoice amounts are euint64 ciphertext. Only you and your counterparty can decrypt them." },
-            { icon: Zap, t: "Instant liquidity", d: "Turn net-30 receivables into cash today — a multi-trillion-dollar industry, now private." },
-            { icon: Lock, t: "Composable privacy", d: "Money enters, moves, finances, and settles — all encrypted. Not one silo, a chain of confidential finance." },
+            { icon: Zap, t: "Instant liquidity", d: "Turn net-30 receivables into cash today. A multi-trillion-dollar industry, now private." },
+            { icon: Lock, t: "Composable privacy", d: "Money enters, moves, finances, and settles, all encrypted. Not one silo, but a chain of confidential finance." },
           ].map((f, i) => (
             <FadeIn key={f.t} delay={i * 0.1} className="card">
               <f.icon className="h-5 w-5 text-gold" />

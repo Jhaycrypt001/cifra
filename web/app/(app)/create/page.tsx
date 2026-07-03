@@ -93,7 +93,7 @@ export default function CreateInvoice() {
             <label className="label">Memo (public)</label>
             <input
               className="input"
-              placeholder="Design work — June"
+              placeholder="Design work, June"
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
             />

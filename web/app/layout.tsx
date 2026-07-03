@@ -20,9 +20,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cifra — Confidential invoicing on the Zama Protocol",
+  title: "Cifra · Confidential invoicing on the Zama Protocol",
   description:
-    "Encrypted invoices + instant financing. Amounts invisible to the chain — until you reveal them.",
+    "Encrypted invoices and instant financing. Amounts invisible to the chain until you reveal them.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

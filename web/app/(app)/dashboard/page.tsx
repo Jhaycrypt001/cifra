@@ -63,7 +63,7 @@ export default function Dashboard() {
         <div>
           <h1 className="font-display text-3xl font-light tracking-tight">Confidential invoices</h1>
           <p className="mt-1 max-w-md text-sm text-paper-dim">
-            Amounts are encrypted on-chain. Only you and your counterparty can reveal them — the pool
+            Amounts are encrypted on-chain. Only you and your counterparty can reveal them. The pool
             can finance an invoice it can never read.
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function Dashboard() {
               {balHandle ? (
                 <Reveal handle={balHandle} contractAddress={ADDRESSES.cUSDT} className="text-xl" />
               ) : (
-                <span className="text-paper-faint">—</span>
+                <span className="text-paper-faint">N/A</span>
               )}
             </div>
             <button className="btn-ghost" onClick={faucet} disabled={fauceting}>
