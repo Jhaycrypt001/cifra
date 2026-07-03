@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useWallet } from "@/lib/wallet";
 import { decryptOne } from "@/lib/fhevm";
+import { biometricUnlock } from "@/lib/biometric";
 import { fmtUSD } from "@/lib/format";
 
 /**
@@ -28,6 +29,12 @@ export function Reveal({
     setBusy(true);
     setErr(null);
     try {
+      // Gate the reveal behind a device biometric (Touch ID / Windows Hello / fingerprint).
+      const ok = await biometricUnlock();
+      if (!ok) {
+        setErr("Biometric check cancelled");
+        return;
+      }
       const signer = await getSigner();
       const v = await decryptOne(signer, address, contractAddress, handle);
       setValue(v);
