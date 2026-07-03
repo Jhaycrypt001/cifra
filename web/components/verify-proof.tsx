@@ -44,8 +44,12 @@ export function VerifyProof() {
           /* RPC hiccup: fall back to the URL threshold */
         }
 
-        // 2) Publicly decrypt the KMS-signed boolean (no wallet required).
-        const res = await publicDecryptReadonly([handle]);
+        // 2) Publicly decrypt the KMS-signed boolean (no wallet required). Guard against a slow
+        //    or unreachable relayer so the page never hangs forever.
+        const timeout = new Promise<never>((_, rej) =>
+          setTimeout(() => rej(new Error("Verification timed out. The relayer may be busy — refresh to retry.")), 45000),
+        );
+        const res = (await Promise.race([publicDecryptReadonly([handle]), timeout])) as Record<string, unknown>;
         const raw = res[handle] ?? res[handle.toLowerCase()] ?? Object.values(res)[0];
         setVerified(Boolean(raw));
         setState("ok");
