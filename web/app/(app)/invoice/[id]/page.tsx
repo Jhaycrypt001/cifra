@@ -8,6 +8,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy } from "lucide-react";
 import { ADDRESSES, cusdt, registry, Status } from "@/lib/contracts";
 import { dueLabel, shortAddr, statusClasses, statusLabel } from "@/lib/format";
+import { useContactName } from "@/lib/contacts";
 import { useWallet } from "@/lib/wallet";
 import { Reveal } from "@/components/Reveal";
 
@@ -61,6 +62,9 @@ export default function InvoicePage() {
     if (Number.isFinite(id)) load();
     if (typeof window !== "undefined") setUrl(window.location.href);
   }, [id, load]);
+
+  const issuerName = useContactName(inv?.issuer);
+  const payerName = useContactName(inv?.payer);
 
   const mine = address?.toLowerCase();
   const isParty = !!inv && (mine === inv.issuer.toLowerCase() || mine === inv.payer.toLowerCase());
@@ -131,8 +135,8 @@ export default function InvoicePage() {
         </div>
 
         <dl className="grid grid-cols-2 gap-3 text-sm">
-          <Field label="From" value={shortAddr(inv.issuer)} mono />
-          <Field label="Bill to" value={shortAddr(inv.payer)} mono />
+          <Field label="From" value={issuerName ?? shortAddr(inv.issuer)} mono={!issuerName} />
+          <Field label="Bill to" value={payerName ?? shortAddr(inv.payer)} mono={!payerName} />
           <Field label="Due" value={dueLabel(inv.dueDate)} />
           <Field label="Payer reputation" value={rep === null ? "—" : `${rep} settled`} />
         </dl>

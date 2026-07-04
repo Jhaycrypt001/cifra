@@ -9,6 +9,7 @@ import { toUnits } from "@/lib/format";
 import { useWallet } from "@/lib/wallet";
 import { DueDatePicker } from "@/components/ui/due-date-picker";
 import { deleteTemplate, getTemplates, saveTemplate, type InvoiceTemplate } from "@/lib/templates";
+import { getName, saveContact, useContacts } from "@/lib/contacts";
 
 export default function CreateInvoice() {
   const router = useRouter();
@@ -22,8 +23,14 @@ export default function CreateInvoice() {
   const [rep, setRep] = useState<number | null>(null);
   const [templates, setTemplates] = useState<InvoiceTemplate[]>([]);
   const [saveTpl, setSaveTpl] = useState(false);
+  const [contactName, setContactName] = useState("");
+  const contacts = useContacts();
 
   useEffect(() => setTemplates(getTemplates()), []);
+  // Prefill the name field with any saved name for the entered payer.
+  useEffect(() => {
+    setContactName(ethers.isAddress(payer) ? getName(payer) ?? "" : "");
+  }, [payer]);
 
   // On-chain reputation: how many invoices this payer has already settled on Cifra.
   useEffect(() => {
@@ -62,6 +69,7 @@ export default function CreateInvoice() {
       const tx = await registry(signer).createInvoice(payer, handle, proof, dueTs, memo || "Invoice");
       await tx.wait();
 
+      if (contactName.trim() && ethers.isAddress(payer)) saveContact(payer, contactName);
       if (saveTpl && ethers.isAddress(payer)) saveTemplate({ payer, amount, memo: memo || "Invoice" });
       router.push("/dashboard");
     } catch (e: any) {
@@ -127,7 +135,39 @@ export default function CreateInvoice() {
           )}
           <div>
             <label className="label">Bill to (payer address)</label>
+            {contacts.length > 0 && (
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {contacts.map((c) => (
+                  <button
+                    key={c.address}
+                    type="button"
+                    onClick={() => setPayer(c.address)}
+                    className="border border-rule px-2.5 py-1 text-[11px] text-paper-dim transition hover:border-gold/50 hover:text-gold"
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
             <input className="input num" placeholder="0x…" value={payer} onChange={(e) => setPayer(e.target.value)} />
+            {ethers.isAddress(payer) && (
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  className="input flex-1 py-1.5 text-xs"
+                  placeholder="Name this address (e.g. Acme Corp)"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  onBlur={() => saveContact(payer, contactName)}
+                />
+                <button
+                  type="button"
+                  onClick={() => saveContact(payer, contactName)}
+                  className="chip border-rule text-paper-dim hover:text-gold"
+                >
+                  Save
+                </button>
+              </div>
+            )}
             {rep !== null && (
               <p className="mt-1.5 text-[11px] text-paper-faint">
                 On-chain reputation: this payer has settled{" "}

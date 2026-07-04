@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ethers } from "ethers";
 import { ADDRESSES, cusdt, Invoice, registry, Status } from "@/lib/contracts";
 import { dueLabel, shortAddr, statusClasses, statusLabel } from "@/lib/format";
+import { useContactName } from "@/lib/contacts";
 import { useWallet } from "@/lib/wallet";
 import { Reveal } from "./Reveal";
 
@@ -66,6 +67,7 @@ export function InvoiceCard({
 
   const counterparty = role === "issuer" ? inv.payer : inv.issuer;
   const counterpartyLabel = role === "issuer" ? "Billed to" : "From";
+  const cpName = useContactName(counterparty);
 
   return (
     <div className="card flex flex-col gap-3">
@@ -75,7 +77,9 @@ export function InvoiceCard({
             {inv.memo || `Invoice #${inv.id}`}
           </Link>
           <div className="text-xs text-muted">
-            {counterpartyLabel} {shortAddr(counterparty)} · due {dueLabel(inv.dueDate)}
+            {counterpartyLabel}{" "}
+            <span className={cpName ? "text-paper-dim" : ""}>{cpName ?? shortAddr(counterparty)}</span> · due{" "}
+            {dueLabel(inv.dueDate)}
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
