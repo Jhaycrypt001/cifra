@@ -6,18 +6,22 @@ import { ADDRESSES } from "./contracts";
 
 const ZERO_HANDLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
+const RPC = process.env.NEXT_PUBLIC_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com";
+
 let instancePromise: Promise<FhevmInstance> | null = null;
 
-/** Lazily create a single Relayer SDK instance bound to the injected wallet provider. */
+/**
+ * Lazily create a single Relayer SDK instance. We bind it to a public RPC (not window.ethereum)
+ * so encryption/decryption works for BOTH MetaMask and Web3Auth (social) users, who have no
+ * injected provider. Wallet signatures happen separately via the connected signer.
+ */
 export async function getFhevm(): Promise<FhevmInstance> {
   if (!instancePromise) {
     instancePromise = (async () => {
       const { createInstance, SepoliaConfig, initSDK } = await import("@zama-fhe/relayer-sdk/web");
       // Loads the TFHE WASM module (no-op if already initialized).
       if (typeof initSDK === "function") await initSDK();
-      const eth = (window as any).ethereum;
-      if (!eth) throw new Error("No wallet provider found");
-      return createInstance({ ...SepoliaConfig, network: eth });
+      return createInstance({ ...SepoliaConfig, network: RPC });
     })();
   }
   return instancePromise;
@@ -118,22 +122,9 @@ export async function publicDecrypt(handles: string[]): Promise<Record<string, u
   return unwrapClear(await fhevm.publicDecrypt(handles));
 }
 
-// Wallet-less instance for public verification (a lender opens /verify with no wallet).
-let readonlyPromise: Promise<FhevmInstance> | null = null;
-async function getFhevmReadonly(): Promise<FhevmInstance> {
-  if (!readonlyPromise) {
-    readonlyPromise = (async () => {
-      const { createInstance, SepoliaConfig, initSDK } = await import("@zama-fhe/relayer-sdk/web");
-      if (typeof initSDK === "function") await initSDK();
-      const rpc = process.env.NEXT_PUBLIC_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com";
-      return createInstance({ ...SepoliaConfig, network: rpc });
-    })();
-  }
-  return readonlyPromise;
-}
-
-/** Public decryption without a connected wallet (used by the /verify page). */
+/** Public decryption without a connected wallet (used by the /verify page). The instance is
+ *  already wallet-free, so this is just an alias with a clear name. */
 export async function publicDecryptReadonly(handles: string[]): Promise<Record<string, unknown>> {
-  const fhevm = await getFhevmReadonly();
+  const fhevm = await getFhevm();
   return unwrapClear(await fhevm.publicDecrypt(handles));
 }

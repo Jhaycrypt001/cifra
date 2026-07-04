@@ -29,16 +29,14 @@ export function Reveal({
     setBusy(true);
     setErr(null);
     try {
-      // Gate the reveal behind a device biometric (Touch ID / Windows Hello / fingerprint).
-      const ok = await biometricUnlock();
-      if (!ok) {
-        setErr("Biometric check cancelled");
-        return;
-      }
+      // Prompt a device biometric (Face ID / Windows Hello / fingerprint) as a best-effort
+      // unlock. Never block the reveal if biometrics are unavailable or dismissed.
+      await biometricUnlock().catch(() => {});
       const signer = await getSigner();
       const v = await decryptOne(signer, address, contractAddress, handle);
       setValue(v);
     } catch (e: any) {
+      console.error("[Cifra] reveal failed:", e);
       setErr(e?.shortMessage || e?.message || "Decrypt failed");
     } finally {
       setBusy(false);
