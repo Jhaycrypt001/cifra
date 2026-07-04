@@ -95,14 +95,6 @@ npm run deploy:sepolia
 
 RPC: `https://ethereum-sepolia-rpc.publicnode.com`
 
-## Status
-
-- [x] Contracts: cUSDT + registry + pool, compiling
-- [x] Tests passing on the FHEVM mock (privacy, pay, finance)
-- [x] Deployed to Sepolia, all three contracts Etherscan-verified
-- [x] Full FHE roundtrip (encrypt, createInvoice, user-decrypt) verified on live Sepolia
-- [x] Frontend: landing + app, Web3Auth, build green
-- [ ] Live demo on Vercel + 3-min pitch + X thread
 
 ## License
 
